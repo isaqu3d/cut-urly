@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateUrlDto } from './dto/create-url.dto';
@@ -48,11 +48,11 @@ export class UrlService {
     const url = await this.urlRepository.findOneBy({ shortCode });
 
     if (!url) {
-      throw new Error('URL not found');
+      throw new NotFoundException('URL not found');
     }
 
     if (url.expiresAt < new Date()) {
-      throw new Error('URL has expired');
+      throw new NotFoundException('URL has expired');
     }
     return url.originalUrl;
   }
