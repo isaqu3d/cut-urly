@@ -16,7 +16,7 @@ export class Url {
   @Column({ unique: true })
   originalUrl: string;
 
-  @Column({ type: 'timestamp' })
+  @Column({ type: 'datetime' })
   expiresAt: Date;
 
   @CreateDateColumn()
