@@ -40,7 +40,8 @@ export class UrlService {
 
     await this.urlRepository.save(url);
 
-    return { url: `http://localhost:3000/${shortCode}` };
+    const baseUrl = process.env.BASE_URL || 'http://localhost:3000';
+    return { url: `${baseUrl}/${shortCode}` };
   }
 
   findOne(id: number) {
