@@ -44,7 +44,16 @@ export class UrlService {
     return { url: `${baseUrl}/${shortCode}` };
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} url`;
+  async findOne(shortCode: string): Promise<string> {
+    const url = await this.urlRepository.findOneBy({ shortCode });
+
+    if (!url) {
+      throw new Error('URL not found');
+    }
+
+    if (url.expiresAt < new Date()) {
+      throw new Error('URL has expired');
+    }
+    return url.originalUrl;
   }
 }
