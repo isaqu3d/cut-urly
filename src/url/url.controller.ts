@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpStatus,
+  Param,
+  Post,
+  Res,
+} from '@nestjs/common';
+import { Response } from 'express';
 import { CreateUrlDto } from './dto/create-url.dto';
 import { UrlService } from './url.service';
 
@@ -12,7 +21,12 @@ export class UrlController {
   }
 
   @Get(':shortCode')
-  async findOne(@Param('shortCode') shortCode: string) {
-    return this.urlService.findOne(shortCode);
+  async redirect(@Param('shortCode') shortCode: string, @Res() res: Response) {
+    try {
+      const originalUrl = await this.urlService.findOne(shortCode);
+      return res.redirect(originalUrl);
+    } catch (error) {
+      return res.status(HttpStatus.NOT_FOUND).send(error.message);
+    }
   }
 }
