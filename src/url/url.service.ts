@@ -20,8 +20,27 @@ export class UrlService {
     return shortCode;
   }
 
-  create(createUrlDto: CreateUrlDto) {
-    return 'This action adds a new url';
+  async create(createUrlDto: CreateUrlDto) {
+    let shortCode: string;
+    let existingUrl: Url | null;
+
+    do {
+      shortCode = this.generateShortCode(6);
+      existingUrl = await this.urlRepository.findOneBy({ shortCode });
+    } while (existingUrl);
+
+    const expiresAt = new Date();
+    expiresAt.setDate(expiresAt.getDate() + 7);
+
+    const url = this.urlRepository.create({
+      originalUrl: createUrlDto.url,
+      shortCode,
+      expiresAt,
+    });
+
+    await this.urlRepository.save(url);
+
+    return { url: `http://localhost:3000/${shortCode}` };
   }
 
   findOne(id: number) {
