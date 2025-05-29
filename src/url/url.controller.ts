@@ -7,12 +7,12 @@ export class UrlController {
   constructor(private readonly urlService: UrlService) {}
 
   @Post('shorten-url')
-  create(@Body('url') createUrlDto: CreateUrlDto) {
+  create(@Body() createUrlDto: CreateUrlDto) {
     return this.urlService.create(createUrlDto);
   }
 
   @Get(':shortCode')
-  findOne(@Param('shortCode') id: string) {
-    return this.urlService.findOne(+id);
+  async findOne(@Param('shortCode') shortCode: string) {
+    return this.urlService.findOne(shortCode);
   }
 }
