@@ -21,13 +21,23 @@ export class UrlService {
   }
 
   async create(createUrlDto: CreateUrlDto) {
+    const baseUrl = process.env.BASE_URL || 'http://localhost:3333';
+
+    const existing = await this.urlRepository.findOneBy({
+      originalUrl: createUrlDto.url,
+    });
+
+    if (existing) {
+      return { url: `${baseUrl}/${existing.shortCode}` };
+    }
+
     let shortCode: string;
-    let existingUrl: Url | null;
+    let existingCode: Url | null;
 
     do {
       shortCode = this.generateShortCode(6);
-      existingUrl = await this.urlRepository.findOneBy({ shortCode });
-    } while (existingUrl);
+      existingCode = await this.urlRepository.findOneBy({ shortCode });
+    } while (existingCode);
 
     const expiresAt = new Date();
     expiresAt.setDate(expiresAt.getDate() + 7);
@@ -40,7 +50,6 @@ export class UrlService {
 
     await this.urlRepository.save(url);
 
-    const baseUrl = process.env.BASE_URL || 'http://localhost:3000';
     return { url: `${baseUrl}/${shortCode}` };
   }
 
