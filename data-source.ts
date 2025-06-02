@@ -1,6 +1,6 @@
 import * as dotenv from 'dotenv';
+import { Url } from 'src/url/entities/url.entity';
 import { DataSource } from 'typeorm';
-import { Url } from './url/entities/url.entity';
 
 dotenv.config();
 
@@ -14,4 +14,7 @@ export default new DataSource({
   entities: [Url],
   migrations: ['dist/migrations/*.js'],
   synchronize: false,
+  ssl: {
+    rejectUnauthorized: false,
+  },
 });
